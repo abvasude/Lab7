@@ -2,10 +2,16 @@
 
 export const router = {};
 
+
+let header = document.querySelector('header').children[0];
+
+let body = document.querySelector('body');
+
+
 /**
  * Changes the "page" (state) that your SPA app is currently set to
  */
-router.setState = function() {
+router.setState = function(newState, previous) {
   /**
    * - There are three states that your SPA app will have
    *    1. The home page
@@ -16,7 +22,7 @@ router.setState = function() {
    * - Changing states will require more than just changing these classes, for example the settings page requires you to change the title to "Settings"
    * - And each individual entry the title changes to "Entry #" based on it's number in the entry order
    *
-   * - When changing states, make sure the back and forward buttons work. You can use hash URLs (e.g. https://someurl.com/#settings) when changing states
+   * - When changing s`1tates, make sure the back and forward buttons work. You can use hash URLs (e.g. https://someurl.com/#settings) when changing states
    *   to make things easier.
    * - Similarly, when viewing an individual entry, a hashed URL might look like https://someurl.com/#entry3
    * 
@@ -35,4 +41,32 @@ router.setState = function() {
    *    1. You may add as many helper functions in this file as you like
    *    2. You may modify the parameters of setState() as much as you like
    */
+  var loc;
+  if(newState == null){
+    header.innerHTML = "Journal Entries";
+    body.className = "";
+    loc = window.location.origin;
+  }
+  else if(newState.page === 'settings'){
+    body.className = 'settings';
+    header.innerHTML = 'Settings';
+    loc = '/#settings';
+  }
+  else if(newState.page === 'home'){
+     header.innerHTML = "Journal Entries";
+     body.className = "";
+     loc = window.location.origin;
+   }
+  else if(newState.page ==='entry'){
+    header.innerHTML = "Entry " + newState.entryNum;
+    body.className = "single-entry";
+    let entryState = document.createElement('entry-page');
+    entryState.entry = document.getElementById(newState.entryNum).entry;
+    body.removeChild(document.getElementsByTagName('entry-page')[0]);
+    body.appendChild(entryState);
+    loc = '/#entry' + newState.entryNum;
+   }
+   if(previous== false){
+    history.pushState(newState, "", loc);
+  }
 }
